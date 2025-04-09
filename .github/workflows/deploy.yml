@@ -16,15 +16,16 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'  # Cambia la versión si es necesario
+          php-version: '8.3'
 
       - name: Install dependencies
         run: |
-          composer install --no-dev --optimize-autoloader
+          alias composer="php composer.phar" |
+          php composer install --no-dev --optimize-autoloader
 
       - name: Deploy to Server
           run: |
-            ssh ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@$${{ secrets.HOST_IP }} 'cd //www/portfolio/back && git pull origin main && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
+            ssh ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@$${{ secrets.HOST_IP }} 'cd /www/portfolio/back && git pull origin main && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
           env:
             HOST_USER: ${{ secrets.HOST_USER }}
             HOST_IP: ${{ secrets.HOST_IP }}
