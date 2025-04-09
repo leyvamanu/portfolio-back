@@ -1,4 +1,4 @@
-ame: Deploy Laravel Project
+name: Deploy Laravel Project
 
 on:
   push:
@@ -22,11 +22,10 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader
 
-      - name: Deploy to FTP Server
-          uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-          with:
-            server: manuleyva-com.espacioseguro.com
-            username: ${{ secrets.FTP_USER }}
-            password: ${{ secrets.FTP_PASS }}
-            local-dir: "./"
-            server-dir: "/www/portfolio/back/"
+      - name: Deploy to Server
+          run: |
+            ssh ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@$${{ secrets.HOST_IP }} 'cd //www/portfolio/back && git pull origin main && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
+          env:
+            HOST_USER: ${{ secrets.HOST_USER }}
+            HOST_IP: ${{ secrets.HOST_IP }}
+            HOST_SSH_KEY: ${{ secrets.HOST_SSH_KEY }}
