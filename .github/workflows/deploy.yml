@@ -19,8 +19,7 @@ jobs:
           php-version: '8.3'
 
       - name: Install dependencies
-        run: |
-          php composer.phar install --no-dev --optimize-autoloader
+        run: composer install --no-dev --optimize-autoloader
 
       - name: Deploy to Server
         env:
