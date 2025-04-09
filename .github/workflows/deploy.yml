@@ -20,13 +20,21 @@ jobs:
 
       - name: Install dependencies
         run: |
-          alias composer="php composer.phar" |
-          php composer install --no-dev --optimize-autoloader
+          php composer.phar install --no-dev --optimize-autoloader
 
       - name: Deploy to Server
-          run: |
-            ssh ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@$${{ secrets.HOST_IP }} 'cd /www/portfolio/back && git pull origin main && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
-          env:
-            HOST_USER: ${{ secrets.HOST_USER }}
-            HOST_IP: ${{ secrets.HOST_IP }}
-            HOST_SSH_KEY: ${{ secrets.HOST_SSH_KEY }}
+        env:
+          HOST_USER: ${{ secrets.HOST_USER }}
+          HOST_IP: ${{ secrets.HOST_IP }}
+          HOST_SSH_KEY: ${{ secrets.HOST_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$HOST_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $HOST_USER@$HOST_IP << 'EOF'
+            cd /www/portfolio/back
+            git pull origin master
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+          EOF
