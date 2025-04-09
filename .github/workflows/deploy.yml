@@ -1,0 +1,32 @@
+ame: Deploy Laravel Project
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'  # Cambia la versión si es necesario
+
+      - name: Install dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader
+
+      - name: Deploy to FTP Server
+          uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+          with:
+            server: manuleyva-com.espacioseguro.com
+            username: ${{ secrets.FTP_USER }}
+            password: ${{ secrets.FTP_PASS }}
+            local-dir: "./"
+            server-dir: "/www/portfolio/back/"
