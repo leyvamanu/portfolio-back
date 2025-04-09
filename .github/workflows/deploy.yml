@@ -13,28 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-
-      - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HOST_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Server
-        env:
-          HOST_USER: ${{ secrets.HOST_USER }}
-          HOST_IP: ${{ secrets.HOST_IP }}
-          HOST_SSH_KEY: ${{ secrets.HOST_SSH_KEY }}
         run: |
-          set -x
-          mkdir -p ~/.ssh
-          echo "$HOST_SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $HOST_USER@$HOST_IP << 'EOF'
-            cd /www/portfolio/back
-            git pull origin master
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-          EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@${{ secrets.HOST_IP }} 'cd /path/to/your/project && git pull origin main && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
+        env:
+          HOST_IP: ${{ secrets.HOST_IP }}
+          HOST_USER: ${{ secrets.HOST_USER }}
