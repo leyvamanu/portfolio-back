@@ -22,8 +22,15 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@${{ secrets.HOST_IP }} 'cd ~/www/portfolio/back && git pull origin master && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@${{ secrets.HOST_IP }} << 'EOF'
+            cd ~/www/portfolio/back
+            git pull origin master
+            php composer.phar install --no-dev --optimize-autoloader
+#            php artisan migrate --force
+#            php artisan config:cache
+#            php artisan route:cache
+          EOF
         env:
           HOST_IP: ${{ secrets.HOST_IP }}
           HOST_USER: ${{ secrets.HOST_USER }}
-          
+
