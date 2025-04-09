@@ -25,7 +25,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@${{ secrets.HOST_IP }} << 'EOF'
             cd ~/www/portfolio/back
             git pull origin master
-            php composer.phar install --no-dev --optimize-autoloader
+            php ~/composer.phar install --no-dev --optimize-autoloader
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
