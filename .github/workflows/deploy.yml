@@ -29,16 +29,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@${{ secrets.HOST_IP }} << 'EOF'
             cd ~/www/portfolio/back
-            # Instalar Composer si no está instalado
-            if ! command -v composer &> /dev/null; then
-              curl -sS https://getcomposer.org/installer | php
-              sudo mv composer.phar /usr/local/bin/composer
-            fi
-            # Asegurarse de que Composer esté usando PHP 8.2
-            sudo update-alternatives --set php /usr/bin/php8.2
-            # Hacer pull de la última versión del código
             git pull origin master
-            composer install --no-dev --optimize-autoloader
+            php ~/composer.phar install --no-dev --optimize-autoloader
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
