@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Http;
 
 class ContactFormRequest extends FormRequest
 {
@@ -39,5 +40,25 @@ class ContactFormRequest extends FormRequest
             'message.required' => 'El mensaje no puede estar vacío.',
             'message.string'   => 'El mensaje debe ser una cadena de texto.',
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        // Verificar el Origin
+        $allowedOrigins = explode(',', env('ALLOWED_ORIGINS'));
+
+        if (!in_array($this->header('Origin'), $allowedOrigins, true)) {
+            abort(403, response()->json(['error' => 'Acceso no autorizado: Origin no permitido'], 403));
+        }
+
+//        // Verificar reCAPTCHA
+//        $response = Http::post('https://www.google.com/recaptcha/api/siteverify', [
+//            'secret' => env('RECAPTCHA_SECRET_KEY'),
+//            'response' => $this->input('recaptcha_token')
+//        ]);
+////        dd(json_decode($response));
+//        if (!$response->json('success')) {
+//            abort(403, response()->json(['error' => 'Verificación reCAPTCHA fallida'], 403));
+//        }
     }
 }
