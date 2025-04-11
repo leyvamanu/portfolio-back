@@ -12,10 +12,10 @@ class ContactController extends Controller
 {
     public function send(ContactFormRequest $request): JsonResponse
     {
-//        $allowedOrigins = explode(',', env('ALLOWED_ORIGINS'));
-//        if (!$request->hasHeader('Origin') || !in_array($request->header('Origin'), $allowedOrigins)) {
-//            return response()->json(['error' => 'Acceso no autorizado'], Response::HTTP_FORBIDDEN);
-//        }
+        $allowedOrigins = explode(',', env('ALLOWED_ORIGINS'));
+        if (!$request->hasHeader('Origin') || !in_array($request->header('Origin'), $allowedOrigins)) {
+            return response()->json(['error' => 'Acceso no autorizado'], Response::HTTP_FORBIDDEN);
+        }
 
         $validated = $request->validated();
         try {
