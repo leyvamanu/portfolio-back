@@ -45,11 +45,11 @@ class ContactFormRequest extends FormRequest
     protected function passedValidation(): void
     {
         // Verificar el Origin
-        $allowedOrigins = explode(',', env('ALLOWED_ORIGINS'));
-
-        if (!in_array($this->header('Origin'), $allowedOrigins, true)) {
-            abort(403, response()->json(['error' => 'Acceso no autorizado: Origin no permitido'], 403));
-        }
+//        $allowedOrigins = explode(',', env('ALLOWED_ORIGINS'));
+//
+//        if (!in_array($this->header('Origin'), $allowedOrigins, true)) {
+//            abort(403, response()->json(['error' => 'Acceso no autorizado: Origin no permitido'], 403));
+//        }
 
 //        // Verificar reCAPTCHA
 //        $response = Http::post('https://www.google.com/recaptcha/api/siteverify', [
