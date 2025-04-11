@@ -2,23 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactFormRequest;
 use App\Mail\ContactFormMail;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-    public function send(Request $request): JsonResponse
+    public function send(ContactFormRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email',
-            'message' => 'required|string',
-        ]);
+        $allowedOrigins = explode(',', env('ALLOWED_ORIGINS'));
 
-        Mail::to('info@manuleyva.com')->send(new ContactFormMail($validated));
-
-        return response()->json(['message' => 'Correo enviado correctamente'], 200);
+        if (!$request->hasHeader('Origin') || !in_array($request->header('Origin'), $allowedOrigins)) {
+            return response()->json(['error' => 'Acceso no autorizado'], Response::HTTP_FORBIDDEN);
+        }
+        $validated = $request->validated();
+        try {
+            Mail::to('info@manuleyva.com')->send(new ContactFormMail($validated));
+            return response()->json([
+                'message' => 'Correo enviado correctamente',
+                'data' => $validated
+            ], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Hubo un problema al enviar el correo'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
