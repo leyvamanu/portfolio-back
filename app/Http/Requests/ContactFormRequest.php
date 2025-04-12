@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Http;
+use ReCaptcha\ReCaptcha;
 
 class ContactFormRequest extends FormRequest
 {
@@ -51,14 +51,31 @@ class ContactFormRequest extends FormRequest
 //            abort(403, response()->json(['error' => 'Acceso no autorizado: Origin no permitido'], 403));
 //        }
 
-//        // Verificar reCAPTCHA
-//        $response = Http::post('https://www.google.com/recaptcha/api/siteverify', [
-//            'secret' => env('RECAPTCHA_SECRET_KEY'),
-//            'response' => $this->input('recaptcha_token')
-//        ]);
-////        dd(json_decode($response));
-//        if (!$response->json('success')) {
-//            abort(403, response()->json(['error' => 'Verificación reCAPTCHA fallida'], 403));
-//        }
+        // Verificar reCAPTCHA con el paquete oficial
+        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+
+        $resp = $recaptcha->verify(
+            $this->input('recaptcha_token'),
+            $this->ip()
+        );
+
+        if (!$resp->isSuccess()) {
+            abort(403, response()->json([
+                'error' => 'Verificación reCAPTCHA fallida',
+                'recaptcha_response' => [
+                    'success' => false,
+                    'error-codes' => $resp->getErrorCodes(),
+                ]
+            ], 403));
+        }
+
+        // Verificar el score mínimo
+        $minScore = 0.6;
+        if ($resp->getScore() < $minScore) {
+            abort(403, response()->json([
+                'error' => 'Puntuación reCAPTCHA demasiado baja',
+                'score' => $resp->getScore(),
+            ], 403));
+        }
     }
 }
