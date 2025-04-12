@@ -52,30 +52,30 @@ class ContactFormRequest extends FormRequest
 //        }
 
         // Verificar reCAPTCHA con el paquete oficial
-        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
-
-        $resp = $recaptcha->verify(
-            $this->input('recaptcha_token'),
-            $this->ip()
-        );
-
-        if (!$resp->isSuccess()) {
-            abort(403, response()->json([
-                'error' => 'Verificación reCAPTCHA fallida',
-                'recaptcha_response' => [
-                    'success' => false,
-                    'error-codes' => $resp->getErrorCodes(),
-                ]
-            ], 403));
-        }
-
-        // Verificar el score mínimo
-        $minScore = 0.6;
-        if ($resp->getScore() < $minScore) {
-            abort(403, response()->json([
-                'error' => 'Puntuación reCAPTCHA demasiado baja',
-                'score' => $resp->getScore(),
-            ], 403));
-        }
+//        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+//
+//        $resp = $recaptcha->verify(
+//            $this->input('recaptcha_token'),
+//            $this->ip()
+//        );
+//
+//        if (!$resp->isSuccess()) {
+//            abort(403, response()->json([
+//                'error' => 'Verificación reCAPTCHA fallida',
+//                'recaptcha_response' => [
+//                    'success' => false,
+//                    'error-codes' => $resp->getErrorCodes(),
+//                ]
+//            ], 403));
+//        }
+//
+//        // Verificar el score mínimo
+//        $minScore = 0.6;
+//        if ($resp->getScore() < $minScore) {
+//            abort(403, response()->json([
+//                'error' => 'Puntuación reCAPTCHA demasiado baja',
+//                'score' => $resp->getScore(),
+//            ], 403));
+//        }
     }
 }
