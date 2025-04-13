@@ -52,7 +52,7 @@ class ContactFormRequest extends FormRequest
 //        }
 
         // Verificar reCAPTCHA con el paquete oficial
-        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+        $recaptcha = new ReCaptcha(config('services.recaptcha.secret'));
 
         $resp = $recaptcha->verify(
             $this->input('recaptcha_token'),
