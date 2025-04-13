@@ -23,9 +23,11 @@ class ContactFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email:rfc,dns',
-            'message' => 'required|string',
+            'name' => 'required|string|min:2|max:100',
+            'email' => 'required|email:rfc,dns|max:255',
+            'message' => 'required|string|min:20|max:2000',
+            'privacy' => 'accepted',
+            'recaptcha_token' => 'required|string',
         ];
     }
 
@@ -34,13 +36,25 @@ class ContactFormRequest extends FormRequest
         return [
             'name.required'    => 'El nombre es obligatorio.',
             'name.string'      => 'El nombre debe ser una cadena de texto.',
-            'name.max'         => 'El nombre no puede tener más de 255 caracteres.',
+            'name.min'         => 'El nombre debe tener al menos 2 caracteres.',
+            'name.max'         => 'El nombre no puede tener más de 100 caracteres.',
+
             'email.required'   => 'El correo electrónico es obligatorio.',
             'email.email'      => 'El correo electrónico debe ser válido.',
+            'email.max'        => 'El correo electrónico no puede tener más de 255 caracteres.',
+
             'message.required' => 'El mensaje no puede estar vacío.',
             'message.string'   => 'El mensaje debe ser una cadena de texto.',
+            'message.min'      => 'El mensaje debe tener al menos 20 caracteres.',
+            'message.max'      => 'El mensaje no puede tener más de 2000 caracteres.',
+
+            'privacy.accepted' => 'Debes aceptar la política de privacidad.',
+
+            'recaptcha_token.required' => 'La verificación reCAPTCHA es obligatoria.',
+            'recaptcha_token.string'   => 'La verificación reCAPTCHA debe ser un token válido.',
         ];
     }
+
 
     protected function passedValidation(): void
     {
