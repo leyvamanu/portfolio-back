@@ -24,11 +24,28 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@${{ secrets.HOST_IP }} << 'EOF'
             cd ~/www/portfolio/back
+
+            echo "→ Pulling latest changes..."
             git pull origin master
+
+            echo "→ Installing dependencies..."
             /home/manuleyva/.bin/php ~/composer.phar install --no-dev --optimize-autoloader
+
+            echo "→ Clearing caches..."
+            /home/manuleyva/.bin/php artisan cache:clear
+            /home/manuleyva/.bin/php artisan config:clear
+            /home/manuleyva/.bin/php artisan route:clear
+            /home/manuleyva/.bin/php artisan view:clear
+
+            echo "→ Running migrations..."
             /home/manuleyva/.bin/php artisan migrate --force
+
+            echo "→ Caching config and routes..."
             /home/manuleyva/.bin/php artisan config:cache
             /home/manuleyva/.bin/php artisan route:cache
+            /home/manuleyva/.bin/php artisan view:cache
+
+            echo "✅ Deployment complete!"
           EOF
         env:
           HOST_IP: ${{ secrets.HOST_IP }}
