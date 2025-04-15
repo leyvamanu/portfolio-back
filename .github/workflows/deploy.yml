@@ -40,6 +40,9 @@ jobs:
             echo "→ Running migrations..."
             /home/manuleyva/.bin/php artisan migrate --force
 
+            echo "→ Creating storage link..."
+            /home/manuleyva/.bin/php artisan storage:link
+
             echo "→ Caching config and routes..."
             /home/manuleyva/.bin/php artisan config:cache
             /home/manuleyva/.bin/php artisan route:cache
