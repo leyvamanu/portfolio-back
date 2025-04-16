@@ -48,6 +48,9 @@ jobs:
             /home/manuleyva/.bin/php artisan route:cache
             /home/manuleyva/.bin/php artisan view:cache
 
+            echo "→ Optimising filament..."
+            /home/manuleyva/.bin/php artisan filament:optimize
+
             echo "✅ Deployment complete!"
           EOF
         env:
