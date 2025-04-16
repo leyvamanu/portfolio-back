@@ -14,4 +14,9 @@ class Skill extends Model
     protected $hidden = [
 
     ];
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }
