@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Models\Project;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -21,7 +22,7 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {
@@ -54,12 +55,13 @@ class ProjectResource extends Resource
                     })
                     ->dehydrated(fn ($state) => filled($state))
                     ->nullable(),
+                Checkbox::make('delete_image')
+                    ->label('Eliminar imagen actual')
+                    ->visible(fn ($get, $record) => filled($record?->image)),
                 ViewField::make('image_preview')
                     ->view('forms.components.image-preview')
                     ->label('Imagen actual')
-                    ->visible(function ($get, $set, $state, $record) {
-                        return filled($record?->image);
-                    }),
+                    ->visible(fn ($get, $record) => filled($record?->image)),
             ]);
     }
 
@@ -78,11 +80,25 @@ class ProjectResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        if ($record->image) {
+                            $path = str_replace('/storage/', '', parse_url($record->image, PHP_URL_PATH));
+                            Storage::disk('public')->delete($path);
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            foreach ($records as $record) {
+                                if ($record->image) {
+                                    $path = str_replace('/storage/', '', parse_url($record->image, PHP_URL_PATH));
+                                    Storage::disk('public')->delete($path);
+                                }
+                            }
+                        }),
                 ]),
             ]);
     }

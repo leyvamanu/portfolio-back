@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReviewResource\Pages;
 use App\Models\Review;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -47,7 +48,12 @@ class ReviewResource extends Resource
                     ->saveUploadedFileUsing(function ($file, $record) {
                         $path = $file->storeAs('avatars', $file->getClientOriginalName(), 'public');
                         return Storage::disk('public')->url($path);
-                    }),
+                    })
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->nullable(),
+                Checkbox::make('delete_avatar')
+                    ->label('Eliminar avatar actual')
+                    ->visible(fn ($get, $record) => filled($record?->avatar)),
                 ViewField::make('avatar_preview')
                     ->view('forms.components.avatar-preview')
                     ->label('Avatar actual')
@@ -73,11 +79,24 @@ class ReviewResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        if ($record->avatar) {
+                            $path = str_replace('/storage/', '', parse_url($record->avatar, PHP_URL_PATH));
+                            Storage::disk('public')->delete($path);
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->before(function ($records) {
+                        foreach ($records as $record) {
+                            if ($record->avatar) {
+                                $path = str_replace('/storage/', '', parse_url($record->avatar, PHP_URL_PATH));
+                                Storage::disk('public')->delete($path);
+                            }
+                        }
+                    }),
                 ]),
             ]);
     }
