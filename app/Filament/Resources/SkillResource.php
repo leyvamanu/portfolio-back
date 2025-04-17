@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SkillResource\Pages;
 use App\Models\Skill;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
@@ -34,7 +35,12 @@ class SkillResource extends Resource
                     ->saveUploadedFileUsing(function ($file, $record) {
                         $path = $file->storeAs('icons', $file->getClientOriginalName(), 'public');
                         return Storage::disk('public')->url($path);
-                    }),
+                    })
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->nullable(),
+                Checkbox::make('delete_icon')
+                    ->label('Eliminar icono actual')
+                    ->visible(fn ($get, $record) => filled($record?->icon)),
                 ViewField::make('icon_preview')
                     ->view('forms.components.icon-preview')
                     ->label('Icono actual')
@@ -55,11 +61,27 @@ class SkillResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        if ($record->icon) {
+                            $path = str_replace('/storage/', '', parse_url($record->icon, PHP_URL_PATH));
+                            Storage::disk('public')->delete($path);
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            foreach ($records as $record) {
+                                if ($record->icon) {
+                                    $path = str_replace('/storage/', '', parse_url($record->icon, PHP_URL_PATH));
+                                    Storage::disk('public')->delete($path);
+                                }
+                            }
+                        }),
                 ]),
             ]);
     }
