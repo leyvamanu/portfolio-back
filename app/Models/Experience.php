@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Project extends Model
+class Experience extends Model
 {
     protected $fillable = [
-        'title',
-        'image',
-        'short_desc',
-        'full_desc',
-        'type',
-        'github',
-        'url',
+        'company',
+        'logo',
+        'position',
+        'description',
+        'start_date',
+        'end_date',
     ];
 
     protected $hidden = [
