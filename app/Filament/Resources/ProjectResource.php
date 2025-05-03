@@ -45,6 +45,7 @@ class ProjectResource extends Resource
                     ->searchable()
                     ->required(),
                 FileUpload::make('image')
+                    ->label('Imagen del proyecto')
                     ->image()
                     ->directory('images')
                     ->disk('public')
