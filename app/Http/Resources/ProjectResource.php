@@ -22,6 +22,7 @@ class ProjectResource extends JsonResource
             'type' => $this->type,
             'github' => $this->github,
             'url' => $this->url,
+            'featured' => $this->featured,
             'skills' => $this->skills(),
         ];
     }

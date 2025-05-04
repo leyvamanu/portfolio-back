@@ -15,6 +15,7 @@ class Project extends Model
         'type',
         'github',
         'url',
+        'featured',
     ];
 
     protected $hidden = [
