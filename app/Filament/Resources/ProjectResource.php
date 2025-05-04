@@ -9,10 +9,12 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -35,6 +37,9 @@ class ProjectResource extends Resource
                     'Professional' => 'Professional',
                     'Personal' => 'Personal',
                 ]),
+                Toggle::make('featured')
+                    ->label('Destacado en el portafolio')
+                    ->default(false),
                 TextInput::make('github')->label('GitHub URL')->url()->maxLength(255),
                 TextInput::make('url')->label('Projecto URL')->url()->maxLength(255),
                 Select::make('skills')
@@ -74,6 +79,10 @@ class ProjectResource extends Resource
                 TextColumn::make('title')->label('Titulo')->searchable()->sortable(),
                 TextColumn::make('type')->label('Tipo')->sortable(),
                 TextColumn::make('short_desc')->label('Descripción')->limit(50),
+                IconColumn::make('featured')
+                    ->label('Destacado')
+                    ->boolean()
+                    ->sortable(),
             ])
             ->filters([
                 //
