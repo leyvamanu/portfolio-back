@@ -4,6 +4,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\StudyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 
@@ -13,4 +14,5 @@ Route::get('/projects', [ProjectController::class, 'index']);
 Route::get('/featured-projects', [ProjectController::class, 'featuredProjects']);
 Route::get('/reviews', [ReviewController::class, 'index']);
 Route::get('/experiences', [ExperienceController::class, 'index']);
+Route::get('/studies', [StudyController::class, 'index']);
 Route::get('/courses', [CourseController::class, 'index']);

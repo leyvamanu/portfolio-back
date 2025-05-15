@@ -10,6 +10,6 @@ class CourseController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return CourseResource::collection(Course::all());
+        return CourseResource::collection(Course::all()->sortByDesc('start_date'));
     }
 }

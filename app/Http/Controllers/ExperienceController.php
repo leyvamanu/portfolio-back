@@ -10,6 +10,6 @@ class ExperienceController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return ExperienceResource::collection(Experience::all());
+        return ExperienceResource::collection(Experience::all()->sortByDesc('start_date'));
     }
 }
