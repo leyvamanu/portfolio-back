@@ -21,7 +21,13 @@ class ExperienceResource extends JsonResource
             'description' => $this->description,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'skills' => $this->skills(),
+            'skills' => $this->skills->map(function ($skill) {
+                return [
+                    'id' => $skill->id,
+                    'name' => $skill->name,
+                    'icon' => $skill->icon,
+                ];
+            }),
         ];
     }
 }

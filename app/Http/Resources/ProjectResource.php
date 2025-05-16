@@ -23,7 +23,13 @@ class ProjectResource extends JsonResource
             'github' => $this->github,
             'url' => $this->url,
             'featured' => $this->featured,
-            'skills' => $this->skills(),
+            'skills' => $this->skills->map(function ($skill) {
+                return [
+                    'id' => $skill->id,
+                    'name' => $skill->name,
+                    'icon' => $skill->icon,
+                ];
+            }),
         ];
     }
 }
