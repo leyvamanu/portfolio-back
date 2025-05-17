@@ -10,6 +10,6 @@ class SkillController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return SkillResource::collection(Skill::all()->sortByDesc('name'));
+        return SkillResource::collection(Skill::all()->sortBy('name'));
     }
 }
