@@ -15,6 +15,7 @@ class StudyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'specialty' => $this->specialty,
             'start_date' => $this->start_date,
